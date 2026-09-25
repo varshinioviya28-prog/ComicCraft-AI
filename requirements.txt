@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+google-generativeai
+diffusers
+fpdf2
+python-dotenv
+jinja2
