@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ComicCraft - AI Comic Creator</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>ComicCraft AI Story Creator</h1>
+    <form action="/generate" method="post">
+        <textarea name="prompt" placeholder="Enter your comic story idea..."></textarea>
+        <button type="submit">Generate Comic</button>
+    </form>
+
+    {% if result %}
+    <div class="result">
+        <h2>Generated Script:</h2>
+        <pre>{{ result }}</pre>
+    </div>
+    {% endif %}
+</body>
+</html>
