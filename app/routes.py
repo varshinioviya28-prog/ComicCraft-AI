@@ -1,7 +1,7 @@
-from flask import Blueprint
+from fastapi import APIRouter
 
-routes = Blueprint("routes", __name__)
+router = APIRouter()
 
-@routes.route("/health")
+@router.get("/health")
 def health():
     return {"status": "ok"}
