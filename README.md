@@ -1,62 +1,38 @@
-from fastapi import FastAPI, Form, HTTPException
-from pydantic import BaseModel
-import google.generativeai as genai
-import os
+# 📖 ComicCraft — AI Comic Story Creator
 
-app = FastAPI(title="ComicCraft AI Comic Creator")
+A FastAPI web app matching the ComicCraft workflow: create a story from a prompt, choose character/setting/tone/art style, generate four comic panels, preview them, download a PDF, and see an export-success page.
 
-# Configure Gemini API
-genai.configure(api_key=os.getenv("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY"))
-model = genai.GenerativeModel('gemini-1.5-pro')
+## Included
+- Home/create page
+- Story prompt, character, setting, tone and art-style controls
+- Four-panel comic preview
+- Panel title, image, scene description, caption, narration and image-prompt reference
+- Download Your Comic as PDF
+- Comic Exported Successfully page
+- FastAPI `/docs`
+- `/generate-comic/json`, `/generate`, `/download-pdf`, `/export-success`, `/test-image`, `/health`
+- Tests, Procfile and Render config
 
-# Pydantic schema for JSON validation
-class PromptRequest(BaseModel):
-    prompt: str
-    character_name: str
-    setting: str
-    tone: str
-    art_style: str
+## Run
+```bash
+python -m venv .venv
+# Windows: .venv\\Scripts\\activate
+# macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+Open http://127.0.0.1:8000 and API docs at http://127.0.0.1:8000/docs.
 
-# Helper functions for workflow
-def generate_outline(prompt):
-    return f"Outline for {prompt}"
+## GitHub
+Create a repository such as `comiccraft-ai-comic-story-creator`, upload all folders/files, then optionally use:
+```bash
+git init
+git add .
+git commit -m "Initial ComicCraft project"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/comiccraft-ai-comic-story-creator.git
+git push -u origin main
+```
 
-def generate_story(prompt):
-    return f"Story and dialogues for {prompt}"
-
-def generate_image(prompt):
-    return f"Image prompt generated for {prompt}"
-
-def build_comic_layout(story, image):
-    return {"status": "layout_created"}
-
-def save_pdf(layout):
-    return "outputs/comic_output.pdf"
-
-# Route 1: Main form generation endpoint
-@app.post("/generate")
-async def generate(
-    prompt: str = Form(...),
-    character_name: str = Form(...),
-    setting: str = Form(...),
-    tone: str = Form(...),
-    art_style: str = Form(...)
-):
-    outline = generate_outline(prompt)
-    story = generate_story(outline)
-    image = generate_image(story)
-    layout = build_comic_layout(story, image)
-    pdf_path = save_pdf(layout)
-    return {"status": "success", "pdf_path": pdf_path}
-
-# Route 2: JSON API endpoint
-@app.post("/generate-comic/json")
-async def generate_comic_json(request: PromptRequest):
-    formatted_prompt = f"Create comic for {request.prompt} with character {request.character_name}"
-    response = model.generate_content(formatted_prompt)
-    return {"status": "success", "data": response.text}
-
-# Route 3: Test image endpoint
-@app.get("/test-image")
-async def test_image():
-    return {"status": "image pipeline active"}
+## Note about AI
+This is a fully runnable, API-key-free demo. The story/panel generation is implemented locally so it can be demonstrated without a paid AI provider. `generate()` in `app/main.py` is the integration point if a real LLM/image API is added later.
